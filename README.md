@@ -21,4 +21,6 @@
 
 
 **Referecias:** 
+* [Capacitación Computación de Alto Rendimiento](https://computing.llnl.gov/?set=training&page=index)
 * [Programacion Paralela - Universidad de Granada](http://lsi.ugr.es/jmantas/pdp/tutoriales/tutorial_omp.php)
+
