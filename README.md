@@ -17,7 +17,8 @@
 * [Realizar el tutorial *Hola Mundo*.](http://lsi.ugr.es/jmantas/pdp/tutoriales/tutorial_omp.php?tuto=01_omp_holamundo) 
 * [Realizar tutorial *Paralelizando bucle*](http://lsi.ugr.es/jmantas/pdp/tutoriales/tutorial_omp.php?tuto=02_omp_forparalelo)
 
-**Informes de PPS:** 
+
+
 
 **Referecias:** 
 * [Programacion Paralela - Universidad de Granada](http://lsi.ugr.es/jmantas/pdp/tutoriales/tutorial_omp.php)
