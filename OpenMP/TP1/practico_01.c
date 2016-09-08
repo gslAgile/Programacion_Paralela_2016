@@ -16,7 +16,7 @@ t_ini = clock();
 for(i = 0; i<TAM; i++) {
 	valor = rand() % 20;
 	contenedor[i] = valor;
-	//printf("%d\n", contenedor[i]);
+	
 }
 
 for(i = 0; i<TAM; i++) {
