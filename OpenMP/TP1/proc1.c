@@ -4,7 +4,6 @@
 
 #define TAM 100000000
 
-/*Agrego comentario*/
 int contenedor[TAM];
 int i, j, valor;
 double fin = 0;
@@ -17,7 +16,7 @@ t_ini = clock();
 for(i = 0; i<TAM; i++) {
 	valor = rand() % 20;
 	contenedor[i] = valor;
-	
+	//print("%d\n", contenedor[i]);
 }
 
 for(i = 0; i<TAM; i++) {
