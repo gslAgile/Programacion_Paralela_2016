@@ -12,10 +12,10 @@
   
   **Curso de OpemMP alternativo**: [Iniciando OpenMP](http://lsi.ugr.es/jmantas/pdp/tutoriales/tutorial_omp.php )
   
-  **Objetivos:**
+  **Objetivos OpenMP:**
   
-* [Realizar el tutorial *Hola Mundo*.](http://lsi.ugr.es/jmantas/pdp/tutoriales/tutorial_omp.php?tuto=01_omp_holamundo) 
-* [Realizar tutorial *Paralelizando bucle*](http://lsi.ugr.es/jmantas/pdp/tutoriales/tutorial_omp.php?tuto=02_omp_forparalelo)
+* [Tutorial 1: Introduccion a OpenMP, realizar el tutorial *Hola Mundo*.](http://lsi.ugr.es/jmantas/pdp/tutoriales/tutorial_omp.php?tuto=01_omp_holamundo) 
+* [Tutorial 2: Realizar tutorial *Paralelizando bucle*](http://lsi.ugr.es/jmantas/pdp/tutoriales/tutorial_omp.php?tuto=02_omp_forparalelo)
 
 
 
