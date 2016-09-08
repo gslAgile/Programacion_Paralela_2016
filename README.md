@@ -29,6 +29,9 @@ Realizar la operacion en paralelo con arreglos de tamaño > 10.000.000.
 Registrar tiempos de ejecución con 1,2,4 y 8 cores y calcular speedups.
 
 
+  **Objetivos MPI:**
+* 
+
 **Referecias:** 
 * [Capacitación Computación de Alto Rendimiento](https://computing.llnl.gov/?set=training&page=index)
 * [Programacion Paralela - Universidad de Granada](http://lsi.ugr.es/jmantas/pdp/tutoriales/tutorial_omp.php)
