@@ -1,6 +1,6 @@
 /*
 *
-* a) Haz que 10 hebras ejecuten paralelamente el código arriba mostrado, para ello usa omp_set_num_threads.
+* b) Prueba a eliminar la clausula private ¿Que ocurre?
 *
 */
 
@@ -22,7 +22,13 @@ else
 
 omp_set_num_threads(nthreads);
  
-#pragma omp parallel private(nthreads, thread)
+/*
+* Al eliminar la sentencia 'private' las variables  privadas de cada hilo dejan de ser privadas
+* y son compartidas por todos los hilos por lo que todos compartiran dichas variables. En este
+* caso quiza alla hilos con el mismo id debido a que compartieron una misma variable thread.
+*/
+
+#pragma omp parallel //private(nthreads, thread)
   {
  
   thread = omp_get_thread_num(); // funcion de omp.h que retorna el numero id de hilo
