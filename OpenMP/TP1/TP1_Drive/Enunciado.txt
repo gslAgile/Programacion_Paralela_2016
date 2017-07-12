@@ -1,0 +1,9 @@
+TP1: Practico OpenMP 2016
+
+Parallel Sum Prefix
+
+Dada una secuencia de n números en un arreglo, obtener el arreglo de igual tamaño donde en cada posicion k=1..n se almacene la suma de los primeros k números. Es decir, en la posición 12 escribir la suma de los primeros 12 números del arreglo original, en la 13 la suma de los primeros 13 , y asi.
+
+Realizar la operacion en paralelo con arreglos de tamaño > 10.000.000.
+
+Registrar tiempos de ejecución con 1,2,4 y 8 cores y calcular speedups.
