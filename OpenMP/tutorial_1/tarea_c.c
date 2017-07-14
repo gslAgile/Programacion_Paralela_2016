@@ -1,7 +1,7 @@
 /*
 *
 * c) Crea una nueva variable e inicializarla fuera de la región paralela y pasa la como privada
-* a la zona paralela, ¿El valor de la variable dentro de la región paralela es correcto? prueba usando fistprivate.
+* a la zona paralela, ¿El valor de la variable dentro de la región paralela es correcto? prueba usando firstprivate.
 *
 */
 
@@ -23,8 +23,9 @@ else
 	nthreads = 10;
 
 omp_set_num_threads(nthreads);
- 
-#pragma omp parallel private(nthreads, thread) firstprivate(nueva_var)//private(nthreads, thread, nueva_var)
+
+//#pragma omp parallel private(nthreads, thread, nueva_var) 
+#pragma omp parallel private(nthreads, thread) firstprivate(nueva_var)
   {
  
   thread = omp_get_thread_num(); // funcion de omp.h que retorna el numero id de hilo
@@ -45,7 +46,7 @@ omp_set_num_threads(nthreads);
   *  inicializado fuera de la region paralela. Ya que en esta region como cada hilo se lo asigna localmente
   *  etonces no sabe como inicializar y la deja vacia o con valor basura.
   *  Para evitar esto lo que hacemos es lograr que tome el valor de inicializacion fuera de la region parelela 
-  *  que se logra con la la sentencia 'firstprivate'.
+  *  que se logra con la sentencia 'firstprivate'.
   */
  
 }
