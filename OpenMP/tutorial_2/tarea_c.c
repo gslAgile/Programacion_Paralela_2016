@@ -1,6 +1,6 @@
 /*
 *
-* a) Prueba el planificador guided.
+* c) Prueba el planificador guided.
 *
 */
 

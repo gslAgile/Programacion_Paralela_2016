@@ -1,6 +1,6 @@
 /*
 *
-* a) Prueba el planificador dynamicc.
+* b) Prueba el planificador dynamicc.
 *
 */
 
