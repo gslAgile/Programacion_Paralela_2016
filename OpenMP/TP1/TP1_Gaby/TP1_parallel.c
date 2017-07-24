@@ -27,10 +27,11 @@ int main(int arg, char * argv[]) {
 /* Declaracion de variables*/
   int *iplist, *pprefixsum ;
   double t_init, t_final, t_procedural, t_paralelo, speedUp, porcentaje;
-  int i, nthreads=1;
+  int i, maxThrs=omp_get_max_threads(), nthreads=omp_get_num_threads();
   char sim=37; // simbolo de caracter equvalente a %
 
 /* Inicializacion de valores*/
+  omp_set_num_threads(nthreads);
   iplist = (int*) malloc(sizeof(int) * N);
   pprefixsum = (int*) malloc(sizeof(int) * N);
 
@@ -47,6 +48,10 @@ int main(int arg, char * argv[]) {
     }
     omp_set_num_threads(nthreads);
   }
+
+  printf("Caracteristicas del sistema\n");
+  printf("Numero de hilos disponibles en el equipo: %i\n",maxThrs);
+  printf("Hilos usados para calculo paralelo: %i\n", nthreads);
   
   /*Calculo parallelo*/
   t_init=omp_get_wtime();
@@ -54,7 +59,7 @@ int main(int arg, char * argv[]) {
 
   t_final=omp_get_wtime();
   t_paralelo=(t_final-t_init);
-  printf("Tiempo procedural: %0.4lf segundos\n", t_paralelo);
+  printf("Tiempo paralelo: %0.4lf segundos\n", t_paralelo);
 
   /*Calculo procedural*/
   omp_set_num_threads(1);
@@ -64,6 +69,9 @@ int main(int arg, char * argv[]) {
   t_procedural=(t_final-t_init);
   printf("Tiempo procedural: %0.4lf segundos\n", t_procedural);
 
+  /*Calculo de speedUp (por Ley de Amdahl)*/
+  speedUp = (t_procedural+t_paralelo)/(t_procedural+(t_paralelo)/nthreads);
+  printf("SpeedUp segun Ley de Amdahl: %0.4lf\n", speedUp);
 
   /* Calculo de speedUp*/
   speedUp = t_procedural/t_paralelo;
@@ -85,7 +93,10 @@ int main(int arg, char * argv[]) {
 
 /*
 * Descripcion:
-* @param :
+* @param int *iplist: puntero a la primera posicion del vector contenedor de los valores de entrada.
+* @param int *_pprefixsum: puntero a la primera posicion del vector para almacenar cada uno de los 
+*                          valores de la suma de prefijos.
+* @param unsigned long size: tamaño de cada uno de los vectores.
 * @return:
 */
 void computeparallelprefix(int *iplist, int *_pprefixsum, unsigned long size)
