@@ -10,6 +10,9 @@
 
 /* Declaracion de funciones*/
 void computeparallelprefix(int *iplist, int *_pprefixsum, unsigned long size);
+void computeparallelprefix2(int *iplist, int *_pprefixsum, unsigned long size, int *pz, int *pw);
+void for_par();
+void for_impar();
 
 /* Funcion principal
 * Descripcion:
@@ -25,7 +28,7 @@ void computeparallelprefix(int *iplist, int *_pprefixsum, unsigned long size);
 int main(int arg, char * argv[]) {
 
 /* Declaracion de variables*/
-  int *iplist, *pprefixsum ;
+  int *iplist, *pprefixsum, *z, *w;
   double t_init, t_final, t_procedural, t_paralelo, speedUp, porcentaje;
   int i, maxThrs=omp_get_max_threads(), nthreads=omp_get_num_threads();
   char sim=37; // simbolo de caracter equvalente a %
@@ -34,6 +37,8 @@ int main(int arg, char * argv[]) {
   omp_set_num_threads(nthreads);
   iplist = (int*) malloc(sizeof(int) * N);
   pprefixsum = (int*) malloc(sizeof(int) * N);
+  z = (int*) malloc(sizeof(int) * (N/2));
+  w = (int*) malloc(sizeof(int) * (N/2));
 
   for(i=0; i<N; i++) iplist[i] = 1;
 
@@ -55,7 +60,8 @@ int main(int arg, char * argv[]) {
   
   /*Calculo parallelo*/
   t_init=omp_get_wtime();
-  computeparallelprefix(iplist, pprefixsum, N);
+  //computeparallelprefix(iplist, pprefixsum, N);
+  computeparallelprefix2(iplist, pprefixsum, N, z, w);
 
   t_final=omp_get_wtime();
   t_paralelo=(t_final-t_init);
@@ -81,10 +87,17 @@ int main(int arg, char * argv[]) {
   printf("Porcentaje de mejora: %3.0lf%c aproximadamente\n\n", porcentaje, sim);
 
   printf("Ultimo dato obtenido: %d \n\n", pprefixsum[N-1]);
+  printf("%d\n", pprefixsum[0]);
+  printf("%d\n", pprefixsum[N-1]);
+  printf("%d\n", pprefixsum[N-2]);
+  printf("%d\n", pprefixsum[N-3]);
+  printf("%d\n", pprefixsum[N-4]);
   //for(i=0; i<N; i++) printf("%d ", (i+1)*(i+2)/2); printf("\n");
 
   free(iplist);
   free(pprefixsum);
+  free(z);
+  free(w);
   return 0;
 }
 
@@ -133,4 +146,67 @@ void computeparallelprefix(int *iplist, int *_pprefixsum, unsigned long size)
     }
   }
   free(z);
+}
+
+/**/
+void computeparallelprefix2(int *iplist, int *_pprefixsum, unsigned long size, int *pz, int *pw)
+{
+  int i, j=0, k=0, l=0, m=0, nthr, *z=pz, *y = _pprefixsum, *w=pw, sum = 0;
+  
+  #pragma omp parallel private(i) firstprivate(j,k,l,m, sum)
+  {
+    /* Calculo de suma de pares*/
+    #pragma omp for schedule(static) 
+    for(i=0; i<size/2; i=i+2) {
+      z[j]= iplist[i]+ iplist[i+1];
+      j++;
+    }
+    /* Calculo recursivo de los prefijos sum w*/
+    #pragma omp for schedule(static) 
+    for(i=0; i<size/2; i=i+2) {
+      sum += z[i];
+      w[i] = sum;
+    }
+
+    #pragma omp single
+    {
+      y[0] = iplist[0];
+      y[1] = z[0];
+      y[2] = z[0] + iplist[2];
+    }
+
+    #pragma omp barrier
+    #pragma omp sections
+    {
+        #pragma omp section
+        {
+            for_impar();
+        }
+
+        #pragma omp section
+        {
+            for_par();
+        }
+    }
+  }
+}
+
+/**/
+void for_par()
+{
+  /**/
+  #pragma omp parallel for schedule(static)
+  for(i=4; i<size; i=i+2) {
+    y[i]= w[m]+iplist[i]; m++;
+  }
+}
+
+/**/
+void for_impar()
+{
+  /**/
+  #pragma omp for schedule(static)
+  for(i=3; i<size; i=i+2) {
+    y[i]= w[l]; l++;
+  }
 }
