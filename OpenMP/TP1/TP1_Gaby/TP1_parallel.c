@@ -62,19 +62,19 @@ int main(int arg, char * argv[]) {
   }
 
   /* --- MENU DE OPCIONES --- */
-  while ( opcion != 5)
+  while ( opcion != 4)
   {
       printf( "\n   >>>_      CARACTERISTICAS DEL SISTEMA      _<<<\n");
       printf("\n   > Numero de hilos disponibles en el equipo: %i",maxThrs);
       printf("\n   > Hilos a utilizar para calculos paralelos: %i\n", nthreads);
 
       printf( "\n   >>>_      MENU DE OPCIONES      _<<<\n");
-      printf( "\n   1. Cambiar numero de hilos para calculos paralelos.");
-      printf( "\n   2. Resolver Algoritmo de Sum Prefix Parallel con OPCION 1.");
-      printf( "\n   3. Resolver Algoritmo de Sum Prefix Parallel con OPCION 2.");
-      printf( "\n   4. Resolver Algoritmo de Sum Prefix Parallel con OPCION 3.");
-      printf( "\n   5. Salir." );
-      printf( "\n\n   > Su seleccion de opcion (1-5): ");
+      printf( "\n   0. Cambiar numero de hilos para calculos paralelos.");
+      printf( "\n   1. Resolver Algoritmo de Sum Prefix Parallel con OPCION 1.");
+      printf( "\n   2. Resolver Algoritmo de Sum Prefix Parallel con OPCION 2.");
+      printf( "\n   3. Resolver Algoritmo de Sum Prefix Parallel con OPCION 3.");
+      printf( "\n   4. Salir." );
+      printf( "\n\n   > Su seleccion de opcion (0-4): ");
 
       scanf( "%d", &opcion );
 
@@ -82,13 +82,13 @@ int main(int arg, char * argv[]) {
 
       switch ( opcion )
       {
-        case 1: printf( "\n   > Introduzca el numero de hilos deseado: ");
+        case 0: printf( "\n   > Introduzca el numero de hilos deseado: ");
                 scanf( "%s", cadena);
                 nthreads= convertir_cadena(cadena);
                 omp_set_num_threads(nthreads);
                 break;
 
-        case 2: /*Calculo parallelo*/
+        case 1: /*Calculo parallelo*/
                 omp_set_num_threads(nthreads);
                 t_init=omp_get_wtime();
                 computeparallelprefix(iplist, pprefixsum, N);
@@ -99,6 +99,23 @@ int main(int arg, char * argv[]) {
                 omp_set_num_threads(1);
                 t_init=omp_get_wtime();
                 computeparallelprefix(iplist, pprefixsum, N);
+                t_final=omp_get_wtime();
+                t_procedural=(t_final-t_init);
+                datos_arreglo(pprefixsum);
+                resultados_obtenidos(t_paralelo, t_procedural, nthreads);
+                break;
+
+        case 2: /*Calculo parallelo*/
+                omp_set_num_threads(nthreads);
+                t_init=omp_get_wtime();
+                computeparallelprefix2(iplist, pprefixsum, z, w);
+                t_final=omp_get_wtime();
+                t_paralelo=(t_final-t_init);
+                datos_arreglo(pprefixsum);
+                /*Calculo procedural*/
+                omp_set_num_threads(1);
+                t_init=omp_get_wtime();
+                computeparallelprefix2(iplist, pprefixsum, z, w);
                 t_final=omp_get_wtime();
                 t_procedural=(t_final-t_init);
                 datos_arreglo(pprefixsum);
@@ -108,23 +125,6 @@ int main(int arg, char * argv[]) {
         case 3: /*Calculo parallelo*/
                 omp_set_num_threads(nthreads);
                 t_init=omp_get_wtime();
-                computeparallelprefix2(iplist, pprefixsum, z, w);
-                t_final=omp_get_wtime();
-                t_paralelo=(t_final-t_init);
-                datos_arreglo(pprefixsum);
-                /*Calculo procedural*/
-                omp_set_num_threads(1);
-                t_init=omp_get_wtime();
-                computeparallelprefix2(iplist, pprefixsum, z, w);
-                t_final=omp_get_wtime();
-                t_procedural=(t_final-t_init);
-                datos_arreglo(pprefixsum);
-                resultados_obtenidos(t_paralelo, t_procedural, nthreads);
-                break;
-
-        case 4: /*Calculo parallelo*/
-                omp_set_num_threads(nthreads);
-                t_init=omp_get_wtime();
                 computeparallelprefix3(iplist, pprefixsum, z, w);
                 t_final=omp_get_wtime();
                 t_paralelo=(t_final-t_init);
@@ -139,7 +139,7 @@ int main(int arg, char * argv[]) {
                 resultados_obtenidos(t_paralelo, t_procedural, nthreads);
                 break;
 
-        case 5: printf( "\n   > Saliendo de aplicacion.\n\n");
+        case 4: printf( "\n   > Saliendo de aplicacion.\n\n");
                 break;
 
         default: printf("\n   > Opcion no valida. Intente nuevamente segun opciones de menu.\n " );
