@@ -7,9 +7,12 @@
 #define N 100000000 //33554432 // 2 ^ 25
 #define porcion N/4 /* Porcion de iteraciones*/
 #define size_zw N/2 /* Porcion de iteraciones*/
+#define tam_v 100 /* tamaño fijo para vectores de estadiscas*/
 
 
 /* Declaracion de funciones*/
+void iniciar_vectores_est(double *tp_est1, double *tp_est2, double *tp_est3, int *im1, int *im2,int *im3);
+void ver_estadisticas(double *tp_est1, double *tp_est2, double *tp_est3);
 int convertir_cadena(char *pc);
 void resultados_obtenidos(double par_t_paralelo, double par_t_procedural, int p_ntrh);
 void datos_arreglo(int *pprefixsum);
@@ -33,8 +36,9 @@ void for_impar(int *py, int *pw);
 int main(int arg, char * argv[]) {
 
 /* Declaracion de variables*/
-  int *iplist, *pprefixsum, *z, *w, opcion;
+  int *iplist, *pprefixsum, *z, *w, opcion, im1[tam_v], im2[tam_v], im3[tam_v]; /* im: iterador de metodo*/
   double t_init, t_final, t_procedural, t_paralelo, speedUp, porcentaje;
+  double ts_est1[tam_v], ts_est2[tam_v], ts_est3[tam_v], tp_est1[tam_v], tp_est2[tam_v], tp_est3[tam_v]; /* tiempos estadisticos en serie y paralelo para cada metodo*/
   int i, maxThrs=omp_get_max_threads(), nthreads=omp_get_num_threads();
   char sim=37; // simbolo de caracter equvalente a %
   char cadena[256];
@@ -45,6 +49,7 @@ int main(int arg, char * argv[]) {
   pprefixsum = (int*) malloc(sizeof(int) * N);
   z = (int*) malloc(sizeof(int) * (N/2));
   w = (int*) malloc(sizeof(int) * (N/2));
+  iniciar_vectores_est(tp_est1, tp_est2, tp_est3, im1, im2, im3); /* iniciar vectores estadisticos*/
 
   for(i=0; i<N; i++) iplist[i] = 1;
 
@@ -62,7 +67,7 @@ int main(int arg, char * argv[]) {
   }
 
   /* --- MENU DE OPCIONES --- */
-  while ( opcion != 4)
+  while ( opcion != 5)
   {
       printf( "\n   >>>_      CARACTERISTICAS DEL SISTEMA      _<<<\n");
       printf("\n   > Numero de hilos disponibles en el equipo: %i",maxThrs);
@@ -73,8 +78,9 @@ int main(int arg, char * argv[]) {
       printf( "\n   1. Resolver Algoritmo de Sum Prefix Parallel con OPCION 1.");
       printf( "\n   2. Resolver Algoritmo de Sum Prefix Parallel con OPCION 2.");
       printf( "\n   3. Resolver Algoritmo de Sum Prefix Parallel con OPCION 3.");
-      printf( "\n   4. Salir." );
-      printf( "\n\n   > Su seleccion de opcion (0-4): ");
+      printf( "\n   4. Ver estadisticas de algoritmos.");
+      printf( "\n   5. Salir." );
+      printf( "\n\n   > Su seleccion de opcion (0-5): ");
 
       scanf( "%d", &opcion );
 
@@ -89,57 +95,78 @@ int main(int arg, char * argv[]) {
                 break;
 
         case 1: /*Calculo parallelo*/
-                omp_set_num_threads(nthreads);
-                t_init=omp_get_wtime();
-                computeparallelprefix(iplist, pprefixsum, N);
-                t_final=omp_get_wtime();
-                t_paralelo=(t_final-t_init);
-                datos_arreglo(pprefixsum);
+                im1[nthreads]++;
+                if(nthreads>1)
+                {
+                  omp_set_num_threads(nthreads);
+                  t_init=omp_get_wtime();
+                  computeparallelprefix(iplist, pprefixsum, N);
+                  t_final=omp_get_wtime();
+                  t_paralelo=(t_final-t_init);
+                  tp_est1[nthreads]= (tp_est1[nthreads]+t_paralelo)/im1[nthreads];
+                  datos_arreglo(pprefixsum);
+                }
                 /*Calculo procedural*/
                 omp_set_num_threads(1);
                 t_init=omp_get_wtime();
                 computeparallelprefix(iplist, pprefixsum, N);
                 t_final=omp_get_wtime();
                 t_procedural=(t_final-t_init);
+                tp_est1[1] = (tp_est1[1]+t_procedural)/im1[1];
                 datos_arreglo(pprefixsum);
                 resultados_obtenidos(t_paralelo, t_procedural, nthreads);
                 break;
 
         case 2: /*Calculo parallelo*/
-                omp_set_num_threads(nthreads);
-                t_init=omp_get_wtime();
-                computeparallelprefix2(iplist, pprefixsum, z, w);
-                t_final=omp_get_wtime();
-                t_paralelo=(t_final-t_init);
-                datos_arreglo(pprefixsum);
+                im2[nthreads]++;
+                if(nthreads>1)
+                {
+                  omp_set_num_threads(nthreads);
+                  t_init=omp_get_wtime();
+                  computeparallelprefix2(iplist, pprefixsum, z, w);
+                  t_final=omp_get_wtime();
+                  t_paralelo=(t_final-t_init);
+                  tp_est2[nthreads]= (tp_est2[nthreads]+t_paralelo)/im2[nthreads];
+                  datos_arreglo(pprefixsum);
+                }
                 /*Calculo procedural*/
                 omp_set_num_threads(1);
                 t_init=omp_get_wtime();
                 computeparallelprefix2(iplist, pprefixsum, z, w);
                 t_final=omp_get_wtime();
                 t_procedural=(t_final-t_init);
+                tp_est2[1] = (tp_est2[1]+t_procedural)/im2[1];
                 datos_arreglo(pprefixsum);
                 resultados_obtenidos(t_paralelo, t_procedural, nthreads);
                 break;
 
         case 3: /*Calculo parallelo*/
-                omp_set_num_threads(nthreads);
-                t_init=omp_get_wtime();
-                computeparallelprefix3(iplist, pprefixsum, z, w);
-                t_final=omp_get_wtime();
-                t_paralelo=(t_final-t_init);
-                datos_arreglo(pprefixsum);
+                im3[nthreads]++;
+                if(nthreads>1)
+                {
+                  omp_set_num_threads(nthreads);
+                  t_init=omp_get_wtime();
+                  computeparallelprefix3(iplist, pprefixsum, z, w);
+                  t_final=omp_get_wtime();
+                  t_paralelo=(t_final-t_init);
+                  tp_est3[nthreads]= (tp_est3[nthreads]+t_paralelo)/im3[nthreads];
+                  datos_arreglo(pprefixsum);
+                }
                 /*Calculo procedural*/
                 omp_set_num_threads(1);
                 t_init=omp_get_wtime();
                 computeparallelprefix3(iplist, pprefixsum, z, w);
                 t_final=omp_get_wtime();
                 t_procedural=(t_final-t_init);
+                tp_est3[1] = (tp_est3[1]+t_procedural)/im3[1];
                 datos_arreglo(pprefixsum);
                 resultados_obtenidos(t_paralelo, t_procedural, nthreads);
                 break;
 
-        case 4: printf( "\n   > Saliendo de aplicacion.\n\n");
+        case 4: ver_estadisticas(tp_est1, tp_est2, tp_est3);
+                break;
+
+        case 5: printf( "\n   > Saliendo de aplicacion.\n\n");
                 break;
 
         default: printf("\n   > Opcion no valida. Intente nuevamente segun opciones de menu.\n " );
@@ -158,6 +185,88 @@ int main(int arg, char * argv[]) {
 }
 
 /* Implementacion de funciones*/
+
+/*
+* Descripcion:
+* @param 
+*/
+void iniciar_vectores_est(double *tp_est1, double *tp_est2, double *tp_est3, int *im1, int *im2,int *im3)
+{
+  int i;
+  for(i=0; i<tam_v; i++)
+    tp_est1[i]=tp_est2[i]=tp_est3[i]=im1[i]=im2[i]=im3[i]=0;
+}
+
+/*
+* Descripcion:
+* @param .
+*/
+void ver_estadisticas(double *tp_est1, double *tp_est2, double *tp_est3)
+{
+  int i, j =0;
+  double speedUp, porcentaje;
+  char sim=37; // simbolo de caracter equvalente a %
+  printf( "\n   >>>_      ESTADISTICAS DE ALGORITMOS      _<<<\n");
+
+  /* METODO 1*/
+  for(i=0; i<tam_v-1; i++)
+  {
+    if(tp_est1[i+1]>0)
+    {
+      if(j==0)
+      {
+        printf( "\n   >>>_               ALGORITMO 1               _<<<\n\n");
+        printf("      |  Cores  |  Tiempo  |  SpeedUp  |   Porcentaje  |\n");
+        j++;
+      }
+      /* Calculo de speedUp practico*/
+      speedUp = tp_est1[1]/tp_est1[i+1];
+      porcentaje = (speedUp*100)-100;
+      printf("      ----------------------------------------------------\n");
+      printf("      |  %*.d    |  %0.4lf  |  %0.4lf  |  %3.0lf%c     |\n",3, i+1, tp_est1[i+1], speedUp, porcentaje, sim);
+    }
+  }
+
+  /* METODO 2*/
+  j=0;
+  for(i=0; i<tam_v-1; i++)
+  {
+    if(tp_est2[i+1]>0)
+    {
+      if(j==0)
+      {
+        printf( "\n   >>>_               ALGORITMO 2               _<<<\n\n");
+        printf("      |  Cores  |  Tiempo  |  SpeedUp  |   Porcentaje  |\n");
+        j++;
+      }
+      /* Calculo de speedUp practico*/
+      speedUp = tp_est2[1]/tp_est2[i+1];
+      porcentaje = (speedUp*100)-100;
+      printf("      ----------------------------------------------------\n");
+      printf("      |  %*.d    |  %0.4lf  |  %0.4lf  |  %3.0lf%c      |\n",3, i+1, tp_est2[i+1], speedUp, porcentaje, sim);
+    }
+  }
+
+  /* METODO 3*/
+  j=0;
+  for(i=0; i<tam_v-1; i++)
+  {
+    if(tp_est3[i+1]>0)
+    {
+      if(j==0)
+      {
+        printf( "\n   >>>_               ALGORITMO 3               _<<<\n\n");
+        printf("      |  Cores  |  Tiempo  |  SpeedUp  |   Porcentaje  |\n");
+        j++;
+      }
+      /* Calculo de speedUp practico*/
+      speedUp = tp_est3[1]/tp_est3[i+1];
+      porcentaje = (speedUp*100)-100;
+      printf("      ----------------------------------------------------\n");
+      printf("      |  %*.d    |  %0.4lf  |  %0.4lf  |  %3.0lf%c      |\n",3, i+1, tp_est3[i+1], speedUp, porcentaje, sim);
+    }
+  }
+}
 
 /*
 * Descripcion:
