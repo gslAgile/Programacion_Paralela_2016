@@ -12,7 +12,7 @@
 
 /* Declaracion de funciones*/
 void iniciar_vectores_est(double *tp_est1, double *tp_est2, double *tp_est3, int *im1, int *im2,int *im3);
-void ver_estadisticas(double *tp_est1, double *tp_est2, double *tp_est3, int *im1, int *im2, int *im3, double speedup[][tam_v]);
+void ver_estadisticas(double *tp_est1, double *tp_est2, double *tp_est3, int *im1, int *im2, int *im3, double speedup[][tam_v], double porcentajes[][tam_v]);
 int convertir_cadena(char *pc);
 void resultados_obtenidos(double par_t_paralelo, double par_t_procedural, int p_ntrh);
 void datos_arreglo(int *pprefixsum);
@@ -37,7 +37,7 @@ int main(int arg, char * argv[]) {
 
 /* Declaracion de variables*/
   int *iplist, *pprefixsum, *z, *w, opcion, im1[tam_v], im2[tam_v], im3[tam_v]; /* im: iterador de metodo*/
-  double t_init, t_final, t_procedural, t_paralelo, speedUp[3][tam_v], porcentaje;
+  double t_init, t_final, t_procedural, t_paralelo, speedUp[3][tam_v], porcentajes[3][tam_v];
   double ts_est1[tam_v], ts_est2[tam_v], ts_est3[tam_v], tp_est1[tam_v], tp_est2[tam_v], tp_est3[tam_v]; /* tiempos estadisticos en serie y paralelo para cada metodo*/
   int i, maxThrs=omp_get_max_threads(), nthreads=omp_get_num_threads();
   char sim=37; // simbolo de caracter equvalente a %
@@ -166,7 +166,7 @@ int main(int arg, char * argv[]) {
                 resultados_obtenidos(t_paralelo, t_procedural, nthreads);
                 break;
 
-        case 4: ver_estadisticas(tp_est1, tp_est2, tp_est3, im1, im2, im3, speedUp);
+        case 4: ver_estadisticas(tp_est1, tp_est2, tp_est3, im1, im2, im3, speedUp, porcentajes);
                 break;
 
         case 5: printf( "\n   > Saliendo de aplicacion.\n\n");
@@ -204,10 +204,9 @@ void iniciar_vectores_est(double *tp_est1, double *tp_est2, double *tp_est3, int
 * Descripcion:
 * @param .
 */
-void ver_estadisticas(double *tp_est1, double *tp_est2, double *tp_est3, int *im1, int *im2, int *im3, double speedup[][tam_v])
+void ver_estadisticas(double *tp_est1, double *tp_est2, double *tp_est3, int *im1, int *im2, int *im3, double speedup[][tam_v], double porcentajes[][tam_v])
 {
   int i, j =0, fa1, fa2, fa3; /* fa: flag algoritmo 1,2,3*/;
-  double porcentaje;
   char sim=37; // simbolo de caracter equvalente a %
   fa1=fa2=fa3=0;
 
@@ -221,14 +220,14 @@ void ver_estadisticas(double *tp_est1, double *tp_est2, double *tp_est3, int *im
       if(j==0)
       {
         printf( "\n   >>>_               ALGORITMO 1               _<<<\n\n");
-        printf("      |  Cores  |  Tiempo  |  SpeedUp  |   Porcentaje  |\n");
+        printf("      |  Cores  |  Tiempo  | SpeedUp  |  Porcentaje  |  Muestras  |\n");
         j++; fa1++;
       }
       /* Calculo de speedUp practico*/
       speedup[0][i+1] = (tp_est1[1]/im1[1])/(tp_est1[i+1]/im1[i+1]);
-      //porcentaje = (speedUp*100)-100;
+      porcentajes[0][i+1] = (speedup[0][i+1]*100)-100;
       printf("      ----------------------------------------------------\n");
-      printf("      |  %*.d    |  %0.4lf  |  %0.4lf  |  %3.0lf%c     |\n",3, i+1, (tp_est1[i+1]/im1[i+1]), speedup[0][i+1], porcentaje, sim);
+      printf("      |  %*.d    |  %0.4lf  |  %0.4lf  |  %5.0lf%c      |  %5.d     |\n",3, i+1, (tp_est1[i+1]/im1[i+1]), speedup[0][i+1], porcentajes[0][i+1], sim, im1[i+1]);
     }
   }
 
@@ -241,14 +240,14 @@ void ver_estadisticas(double *tp_est1, double *tp_est2, double *tp_est3, int *im
       if(j==0)
       {
         printf( "\n   >>>_               ALGORITMO 2               _<<<\n\n");
-        printf("      |  Cores  |  Tiempo  |  SpeedUp  |   Porcentaje  |\n");
+        printf("      |  Cores  |  Tiempo  | SpeedUp  |  Porcentaje  |  Muestras  |\n");
         j++; fa2++;
       }
       /* Calculo de speedUp practico*/
       speedup[1][i+1] = (tp_est2[1]/im2[1])/(tp_est2[i+1]/im2[i+1]);
-      //porcentaje = (speedUp*100)-100;
+      porcentajes[1][i+1] = (speedup[1][i+1]*100)-100;
       printf("      ----------------------------------------------------\n");
-      printf("      |  %*.d    |  %0.4lf  |  %0.4lf  |  %3.0lf%c      |\n",3, i+1, (tp_est2[i+1]/im2[i+1]), speedup[1][i+1], porcentaje, sim);
+      printf("      |  %*.d    |  %0.4lf  |  %0.4lf  |  %5.0lf%c      |  %5.d     |\n",3, i+1, (tp_est2[i+1]/im2[i+1]), speedup[1][i+1], porcentajes[1][i+1], sim, im2[i+1]);
     }
   }
 
@@ -261,14 +260,14 @@ void ver_estadisticas(double *tp_est1, double *tp_est2, double *tp_est3, int *im
       if(j==0)
       {
         printf( "\n   >>>_               ALGORITMO 3               _<<<\n\n");
-        printf("      |  Cores  |  Tiempo  |  SpeedUp  |   Porcentaje  |\n");
+        printf("      |  Cores  |  Tiempo  | SpeedUp  |  Porcentaje  |  Muestras  |\n");
         j++; fa3++;
       }
       /* Calculo de speedUp practico*/
       speedup[2][i+1] = (tp_est3[1]/im3[1])/(tp_est3[i+1]/im3[i+1]);
-      //porcentaje = (speedUp*100)-100;
+      porcentajes[2][i+1] = (speedup[2][i+1]*100)-100;
       printf("      ----------------------------------------------------\n");
-      printf("      |  %*.d    |  %0.4lf  |  %0.4lf  |  %3.0lf%c      |\n",3, i+1, (tp_est3[i+1]/im3[i+1]), speedup[2][i+1], porcentaje, sim);
+      printf("      |  %*.d    |  %0.4lf  |  %0.4lf  |  %5.0lf%c      |  %5.d     |\n",3, i+1, (tp_est3[i+1]/im3[i+1]), speedup[2][i+1], porcentajes[2][i+1], sim, im3[i+1]);
     }
   }
 
