@@ -12,7 +12,7 @@
 
 /* Declaracion de funciones*/
 void iniciar_vectores_est(double *tp_est1, double *tp_est2, double *tp_est3, int *im1, int *im2,int *im3);
-void ver_estadisticas(double *tp_est1, double *tp_est2, double *tp_est3);
+void ver_estadisticas(double *tp_est1, double *tp_est2, double *tp_est3, int *im1, int *im2, int *im3, double speedup[][tam_v]);
 int convertir_cadena(char *pc);
 void resultados_obtenidos(double par_t_paralelo, double par_t_procedural, int p_ntrh);
 void datos_arreglo(int *pprefixsum);
@@ -37,7 +37,7 @@ int main(int arg, char * argv[]) {
 
 /* Declaracion de variables*/
   int *iplist, *pprefixsum, *z, *w, opcion, im1[tam_v], im2[tam_v], im3[tam_v]; /* im: iterador de metodo*/
-  double t_init, t_final, t_procedural, t_paralelo, speedUp, porcentaje;
+  double t_init, t_final, t_procedural, t_paralelo, speedUp[3][tam_v], porcentaje;
   double ts_est1[tam_v], ts_est2[tam_v], ts_est3[tam_v], tp_est1[tam_v], tp_est2[tam_v], tp_est3[tam_v]; /* tiempos estadisticos en serie y paralelo para cada metodo*/
   int i, maxThrs=omp_get_max_threads(), nthreads=omp_get_num_threads();
   char sim=37; // simbolo de caracter equvalente a %
@@ -95,86 +95,89 @@ int main(int arg, char * argv[]) {
                 break;
 
         case 1: /*Calculo parallelo*/
-                im1[nthreads]++;
                 if(nthreads>1)
                 {
+                  im1[nthreads]++;
                   omp_set_num_threads(nthreads);
                   t_init=omp_get_wtime();
                   computeparallelprefix(iplist, pprefixsum, N);
                   t_final=omp_get_wtime();
                   t_paralelo=(t_final-t_init);
-                  tp_est1[nthreads]= (tp_est1[nthreads]+t_paralelo)/im1[nthreads];
+                  tp_est1[nthreads]= tp_est1[nthreads]+t_paralelo; /* acumulacion de tiempos paralelos con metodo 1*/
                   datos_arreglo(pprefixsum);
                 }
                 /*Calculo procedural*/
+                im1[1]++;
                 omp_set_num_threads(1);
                 t_init=omp_get_wtime();
                 computeparallelprefix(iplist, pprefixsum, N);
                 t_final=omp_get_wtime();
                 t_procedural=(t_final-t_init);
-                tp_est1[1] = (tp_est1[1]+t_procedural)/im1[1];
+                tp_est1[1] = tp_est1[1]+t_procedural; /* acumulacion de tiempos seriales con metodo 1*/
                 datos_arreglo(pprefixsum);
                 resultados_obtenidos(t_paralelo, t_procedural, nthreads);
                 break;
 
         case 2: /*Calculo parallelo*/
-                im2[nthreads]++;
                 if(nthreads>1)
                 {
+                  im2[nthreads]++;
                   omp_set_num_threads(nthreads);
                   t_init=omp_get_wtime();
                   computeparallelprefix2(iplist, pprefixsum, z, w);
                   t_final=omp_get_wtime();
                   t_paralelo=(t_final-t_init);
-                  tp_est2[nthreads]= (tp_est2[nthreads]+t_paralelo)/im2[nthreads];
+                  tp_est2[nthreads]= tp_est2[nthreads]+t_paralelo; /* acumulacion de tiempos paralelos con metodo 2*/
                   datos_arreglo(pprefixsum);
                 }
                 /*Calculo procedural*/
+                im2[1]++;
                 omp_set_num_threads(1);
                 t_init=omp_get_wtime();
                 computeparallelprefix2(iplist, pprefixsum, z, w);
                 t_final=omp_get_wtime();
                 t_procedural=(t_final-t_init);
-                tp_est2[1] = (tp_est2[1]+t_procedural)/im2[1];
+                tp_est2[1] = tp_est2[1]+t_procedural; /* acumulacion de tiempos seriales con metodo 2*/
                 datos_arreglo(pprefixsum);
                 resultados_obtenidos(t_paralelo, t_procedural, nthreads);
                 break;
 
         case 3: /*Calculo parallelo*/
-                im3[nthreads]++;
                 if(nthreads>1)
                 {
+                  im3[nthreads]++;
                   omp_set_num_threads(nthreads);
                   t_init=omp_get_wtime();
                   computeparallelprefix3(iplist, pprefixsum, z, w);
                   t_final=omp_get_wtime();
                   t_paralelo=(t_final-t_init);
-                  tp_est3[nthreads]= (tp_est3[nthreads]+t_paralelo)/im3[nthreads];
+                  tp_est3[nthreads]= tp_est3[nthreads]+t_paralelo; /* acumulacion de tiempos paralelos con metodo 3*/
                   datos_arreglo(pprefixsum);
                 }
                 /*Calculo procedural*/
+                im3[1]++;
                 omp_set_num_threads(1);
                 t_init=omp_get_wtime();
                 computeparallelprefix3(iplist, pprefixsum, z, w);
                 t_final=omp_get_wtime();
                 t_procedural=(t_final-t_init);
-                tp_est3[1] = (tp_est3[1]+t_procedural)/im3[1];
+                tp_est3[1] = tp_est3[1]+t_procedural; /* acumulacion de tiempos seriales con metodo 3*/
                 datos_arreglo(pprefixsum);
                 resultados_obtenidos(t_paralelo, t_procedural, nthreads);
                 break;
 
-        case 4: ver_estadisticas(tp_est1, tp_est2, tp_est3);
+        case 4: ver_estadisticas(tp_est1, tp_est2, tp_est3, im1, im2, im3, speedUp);
                 break;
 
         case 5: printf( "\n   > Saliendo de aplicacion.\n\n");
                 break;
 
-        default: printf("\n   > Opcion no valida. Intente nuevamente segun opciones de menu.\n " );
+        default: printf("\n   > Opcion no valida. Intente nuevamente segun opciones del menu.\n " );
        }
        /* Fin del anidamiento */
   }
 
-  sleep(1);
+  sleep(0.5);
 
   free(iplist);
   free(pprefixsum);
@@ -201,29 +204,31 @@ void iniciar_vectores_est(double *tp_est1, double *tp_est2, double *tp_est3, int
 * Descripcion:
 * @param .
 */
-void ver_estadisticas(double *tp_est1, double *tp_est2, double *tp_est3)
+void ver_estadisticas(double *tp_est1, double *tp_est2, double *tp_est3, int *im1, int *im2, int *im3, double speedup[][tam_v])
 {
-  int i, j =0;
-  double speedUp, porcentaje;
+  int i, j =0, fa1, fa2, fa3; /* fa: flag algoritmo 1,2,3*/;
+  double porcentaje;
   char sim=37; // simbolo de caracter equvalente a %
+  fa1=fa2=fa3=0;
+
   printf( "\n   >>>_      ESTADISTICAS DE ALGORITMOS      _<<<\n");
 
   /* METODO 1*/
   for(i=0; i<tam_v-1; i++)
   {
-    if(tp_est1[i+1]>0)
+    if(tp_est1[i+1]>0 && im1[i+1]>0)
     {
       if(j==0)
       {
         printf( "\n   >>>_               ALGORITMO 1               _<<<\n\n");
         printf("      |  Cores  |  Tiempo  |  SpeedUp  |   Porcentaje  |\n");
-        j++;
+        j++; fa1++;
       }
       /* Calculo de speedUp practico*/
-      speedUp = tp_est1[1]/tp_est1[i+1];
-      porcentaje = (speedUp*100)-100;
+      speedup[0][i+1] = (tp_est1[1]/im1[1])/(tp_est1[i+1]/im1[i+1]);
+      //porcentaje = (speedUp*100)-100;
       printf("      ----------------------------------------------------\n");
-      printf("      |  %*.d    |  %0.4lf  |  %0.4lf  |  %3.0lf%c     |\n",3, i+1, tp_est1[i+1], speedUp, porcentaje, sim);
+      printf("      |  %*.d    |  %0.4lf  |  %0.4lf  |  %3.0lf%c     |\n",3, i+1, (tp_est1[i+1]/im1[i+1]), speedup[0][i+1], porcentaje, sim);
     }
   }
 
@@ -231,19 +236,19 @@ void ver_estadisticas(double *tp_est1, double *tp_est2, double *tp_est3)
   j=0;
   for(i=0; i<tam_v-1; i++)
   {
-    if(tp_est2[i+1]>0)
+    if(tp_est2[i+1]>0 && im2[i+1]>0)
     {
       if(j==0)
       {
         printf( "\n   >>>_               ALGORITMO 2               _<<<\n\n");
         printf("      |  Cores  |  Tiempo  |  SpeedUp  |   Porcentaje  |\n");
-        j++;
+        j++; fa2++;
       }
       /* Calculo de speedUp practico*/
-      speedUp = tp_est2[1]/tp_est2[i+1];
-      porcentaje = (speedUp*100)-100;
+      speedup[1][i+1] = (tp_est2[1]/im2[1])/(tp_est2[i+1]/im2[i+1]);
+      //porcentaje = (speedUp*100)-100;
       printf("      ----------------------------------------------------\n");
-      printf("      |  %*.d    |  %0.4lf  |  %0.4lf  |  %3.0lf%c      |\n",3, i+1, tp_est2[i+1], speedUp, porcentaje, sim);
+      printf("      |  %*.d    |  %0.4lf  |  %0.4lf  |  %3.0lf%c      |\n",3, i+1, (tp_est2[i+1]/im2[i+1]), speedup[1][i+1], porcentaje, sim);
     }
   }
 
@@ -251,21 +256,37 @@ void ver_estadisticas(double *tp_est1, double *tp_est2, double *tp_est3)
   j=0;
   for(i=0; i<tam_v-1; i++)
   {
-    if(tp_est3[i+1]>0)
+    if(tp_est3[i+1]>0 && im3[i+1]>0)
     {
       if(j==0)
       {
         printf( "\n   >>>_               ALGORITMO 3               _<<<\n\n");
         printf("      |  Cores  |  Tiempo  |  SpeedUp  |   Porcentaje  |\n");
-        j++;
+        j++; fa3++;
       }
       /* Calculo de speedUp practico*/
-      speedUp = tp_est3[1]/tp_est3[i+1];
-      porcentaje = (speedUp*100)-100;
+      speedup[2][i+1] = (tp_est3[1]/im3[1])/(tp_est3[i+1]/im3[i+1]);
+      //porcentaje = (speedUp*100)-100;
       printf("      ----------------------------------------------------\n");
-      printf("      |  %*.d    |  %0.4lf  |  %0.4lf  |  %3.0lf%c      |\n",3, i+1, tp_est3[i+1], speedUp, porcentaje, sim);
+      printf("      |  %*.d    |  %0.4lf  |  %0.4lf  |  %3.0lf%c      |\n",3, i+1, (tp_est3[i+1]/im3[i+1]), speedup[2][i+1], porcentaje, sim);
     }
   }
+
+  if(fa1==0){
+    printf("\n----------------------------------------------------");
+    printf("\n   > Sin estadisticas para el algoritmo 1.");}
+
+  if(fa2==0){
+    printf("\n----------------------------------------------------");
+    printf("\n   > Sin estadisticas para el algoritmo 2.");
+  }
+
+  if(fa3==0){
+    printf("\n----------------------------------------------------");
+    printf("\n   > Sin estadisticas para el algoritmo 3.");
+  }
+  printf("\n----------------------------------------------------\n\n");
+  /*speedup[0][0]= 18; //prueba*/
 }
 
 /*
