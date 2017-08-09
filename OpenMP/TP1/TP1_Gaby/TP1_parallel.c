@@ -210,7 +210,9 @@ void ver_estadisticas(double *tp_est1, double *tp_est2, double *tp_est3, int *im
   char sim=37; // simbolo de caracter equvalente a %
   fa1=fa2=fa3=0;
 
-  printf( "\n   >>>_      ESTADISTICAS DE ALGORITMOS      _<<<\n");
+  printf("\n-----------------------------------------------------------------------------");
+  printf( "\n   >>>_              ESTADISTICAS DE ALGORITMOS               _<<<\n");
+  printf("-----------------------------------------------------------------------------\n");
 
   /* METODO 1*/
   for(i=0; i<tam_v-1; i++)
@@ -219,7 +221,9 @@ void ver_estadisticas(double *tp_est1, double *tp_est2, double *tp_est3, int *im
     {
       if(j==0)
       {
-        printf( "\n   >>>_               ALGORITMO 1               _<<<\n\n");
+        printf("\n-----------------------------------------------------------------------------");
+        printf( "\n   >>>_                      ALGORITMO 1                      _<<<\n");
+        printf("-----------------------------------------------------------------------------\n\n");
         printf("      |  Cores  |  Tiempo  | SpeedUp  |  Porcentaje  |  Muestras  |\n");
         j++; fa1++;
       }
@@ -239,7 +243,9 @@ void ver_estadisticas(double *tp_est1, double *tp_est2, double *tp_est3, int *im
     {
       if(j==0)
       {
-        printf( "\n   >>>_               ALGORITMO 2               _<<<\n\n");
+        printf("\n-----------------------------------------------------------------------------");
+        printf( "\n   >>>_                     ALGORITMO 2                       _<<<\n");
+        printf("-----------------------------------------------------------------------------\n\n");
         printf("      |  Cores  |  Tiempo  | SpeedUp  |  Porcentaje  |  Muestras  |\n");
         j++; fa2++;
       }
@@ -259,7 +265,9 @@ void ver_estadisticas(double *tp_est1, double *tp_est2, double *tp_est3, int *im
     {
       if(j==0)
       {
-        printf( "\n   >>>_               ALGORITMO 3               _<<<\n\n");
+        printf("\n-----------------------------------------------------------------------------");
+        printf( "\n   >>>_                      ALGORITMO 3                      _<<<\n");
+        printf("-----------------------------------------------------------------------------\n\n");
         printf("      |  Cores  |  Tiempo  | SpeedUp  |  Porcentaje  |  Muestras  |\n");
         j++; fa3++;
       }
@@ -272,19 +280,19 @@ void ver_estadisticas(double *tp_est1, double *tp_est2, double *tp_est3, int *im
   }
 
   if(fa1==0){
-    printf("\n----------------------------------------------------");
+    printf("\n-----------------------------------------------------------------------------");
     printf("\n   > Sin estadisticas para el algoritmo 1.");}
 
   if(fa2==0){
-    printf("\n----------------------------------------------------");
+    printf("\n-----------------------------------------------------------------------------");
     printf("\n   > Sin estadisticas para el algoritmo 2.");
   }
 
   if(fa3==0){
-    printf("\n----------------------------------------------------");
+    printf("\n-----------------------------------------------------------------------------");
     printf("\n   > Sin estadisticas para el algoritmo 3.");
   }
-  printf("\n----------------------------------------------------\n\n");
+  printf("\n-----------------------------------------------------------------------------\n\n");
   /*speedup[0][0]= 18; //prueba*/
 }
 
