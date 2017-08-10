@@ -230,7 +230,7 @@ void ver_estadisticas(double *tp_est1, double *tp_est2, double *tp_est3, int *im
       /* Calculo de speedUp practico*/
       speedup[0][i+1] = (tp_est1[1]/im1[1])/(tp_est1[i+1]/im1[i+1]);
       porcentajes[0][i+1] = (speedup[0][i+1]*100)-100;
-      printf("      ----------------------------------------------------\n");
+      printf("      -------------------------------------------------------------\n");
       printf("      |  %*.d    |  %0.4lf  |  %0.4lf  |  %5.0lf%c      |  %5.d     |\n",3, i+1, (tp_est1[i+1]/im1[i+1]), speedup[0][i+1], porcentajes[0][i+1], sim, im1[i+1]);
     }
   }
@@ -252,7 +252,7 @@ void ver_estadisticas(double *tp_est1, double *tp_est2, double *tp_est3, int *im
       /* Calculo de speedUp practico*/
       speedup[1][i+1] = (tp_est2[1]/im2[1])/(tp_est2[i+1]/im2[i+1]);
       porcentajes[1][i+1] = (speedup[1][i+1]*100)-100;
-      printf("      ----------------------------------------------------\n");
+      printf("      -------------------------------------------------------------\n");
       printf("      |  %*.d    |  %0.4lf  |  %0.4lf  |  %5.0lf%c      |  %5.d     |\n",3, i+1, (tp_est2[i+1]/im2[i+1]), speedup[1][i+1], porcentajes[1][i+1], sim, im2[i+1]);
     }
   }
@@ -274,7 +274,7 @@ void ver_estadisticas(double *tp_est1, double *tp_est2, double *tp_est3, int *im
       /* Calculo de speedUp practico*/
       speedup[2][i+1] = (tp_est3[1]/im3[1])/(tp_est3[i+1]/im3[i+1]);
       porcentajes[2][i+1] = (speedup[2][i+1]*100)-100;
-      printf("      ----------------------------------------------------\n");
+      printf("      -------------------------------------------------------------\n");
       printf("      |  %*.d    |  %0.4lf  |  %0.4lf  |  %5.0lf%c      |  %5.d     |\n",3, i+1, (tp_est3[i+1]/im3[i+1]), speedup[2][i+1], porcentajes[2][i+1], sim, im3[i+1]);
     }
   }
