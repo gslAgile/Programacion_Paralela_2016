@@ -42,6 +42,7 @@ int main(int arg, char * argv[]) {
   int i, maxThrs=omp_get_max_threads(), nthreads=omp_get_num_threads();
   char sim=37; // simbolo de caracter equvalente a %
   char cadena[256];
+  int iteraciones=1;
 
 /* Inicializacion de valores*/
   omp_set_num_threads(nthreads);
@@ -67,7 +68,7 @@ int main(int arg, char * argv[]) {
   }
 
   /* --- MENU DE OPCIONES --- */
-  while ( opcion != 5)
+  while ( opcion != 6)
   {
       printf( "\n   >>>_      CARACTERISTICAS DEL SISTEMA      _<<<\n");
       printf("\n   > Numero de hilos disponibles en el equipo: %i",maxThrs);
@@ -79,7 +80,8 @@ int main(int arg, char * argv[]) {
       printf( "\n   2. Resolver Algoritmo de Sum Prefix Parallel con OPCION 2.");
       printf( "\n   3. Resolver Algoritmo de Sum Prefix Parallel con OPCION 3.");
       printf( "\n   4. Ver estadisticas de algoritmos.");
-      printf( "\n   5. Salir." );
+      printf( "\n   5. Cambiar numero de iteraciones por algoritmo paralelo.");
+      printf( "\n   6. Salir." );
       printf( "\n\n   > Su seleccion de opcion (0-5): ");
 
       scanf( "%d", &opcion );
@@ -88,88 +90,104 @@ int main(int arg, char * argv[]) {
 
       switch ( opcion )
       {
-        case 0: printf( "\n   > Introduzca el numero de hilos deseado: ");
+        case 0: memset(cadena, '\0', 256);
+                printf( "\n   > Introduzca el numero de hilos deseado: ");
                 scanf( "%s", cadena);
                 nthreads= convertir_cadena(cadena);
                 omp_set_num_threads(nthreads);
                 break;
 
-        case 1: /*Calculo parallelo*/
-                if(nthreads>1)
-                {
-                  im1[nthreads]++;
-                  omp_set_num_threads(nthreads);
+        case 1: 
+                for(i=0; i<iteraciones; i++){
+                  /*Calculo parallelo*/
+                  if(nthreads>1)
+                  {
+                    im1[nthreads]++;
+                    omp_set_num_threads(nthreads);
+                    t_init=omp_get_wtime();
+                    computeparallelprefix(iplist, pprefixsum, N);
+                    t_final=omp_get_wtime();
+                    t_paralelo=(t_final-t_init);
+                    tp_est1[nthreads]= tp_est1[nthreads]+t_paralelo; /* acumulacion de tiempos paralelos con metodo 1*/
+                    datos_arreglo(pprefixsum);
+                  }
+                  /*Calculo procedural*/
+                  im1[1]++;
+                  omp_set_num_threads(1);
                   t_init=omp_get_wtime();
                   computeparallelprefix(iplist, pprefixsum, N);
                   t_final=omp_get_wtime();
-                  t_paralelo=(t_final-t_init);
-                  tp_est1[nthreads]= tp_est1[nthreads]+t_paralelo; /* acumulacion de tiempos paralelos con metodo 1*/
+                  t_procedural=(t_final-t_init);
+                  tp_est1[1] = tp_est1[1]+t_procedural; /* acumulacion de tiempos seriales con metodo 1*/
                   datos_arreglo(pprefixsum);
                 }
-                /*Calculo procedural*/
-                im1[1]++;
-                omp_set_num_threads(1);
-                t_init=omp_get_wtime();
-                computeparallelprefix(iplist, pprefixsum, N);
-                t_final=omp_get_wtime();
-                t_procedural=(t_final-t_init);
-                tp_est1[1] = tp_est1[1]+t_procedural; /* acumulacion de tiempos seriales con metodo 1*/
-                datos_arreglo(pprefixsum);
                 resultados_obtenidos(t_paralelo, t_procedural, nthreads);
                 break;
 
-        case 2: /*Calculo parallelo*/
-                if(nthreads>1)
-                {
-                  im2[nthreads]++;
-                  omp_set_num_threads(nthreads);
+        case 2: 
+                for(i=0; i<iteraciones; i++){
+                  /*Calculo parallelo*/
+                  if(nthreads>1)
+                  {
+                    im2[nthreads]++;
+                    omp_set_num_threads(nthreads);
+                    t_init=omp_get_wtime();
+                    computeparallelprefix2(iplist, pprefixsum, z, w);
+                    t_final=omp_get_wtime();
+                    t_paralelo=(t_final-t_init);
+                    tp_est2[nthreads]= tp_est2[nthreads]+t_paralelo; /* acumulacion de tiempos paralelos con metodo 2*/
+                    datos_arreglo(pprefixsum);
+                  }
+                  /*Calculo procedural*/
+                  im2[1]++;
+                  omp_set_num_threads(1);
                   t_init=omp_get_wtime();
                   computeparallelprefix2(iplist, pprefixsum, z, w);
                   t_final=omp_get_wtime();
-                  t_paralelo=(t_final-t_init);
-                  tp_est2[nthreads]= tp_est2[nthreads]+t_paralelo; /* acumulacion de tiempos paralelos con metodo 2*/
+                  t_procedural=(t_final-t_init);
+                  tp_est2[1] = tp_est2[1]+t_procedural; /* acumulacion de tiempos seriales con metodo 2*/
                   datos_arreglo(pprefixsum);
                 }
-                /*Calculo procedural*/
-                im2[1]++;
-                omp_set_num_threads(1);
-                t_init=omp_get_wtime();
-                computeparallelprefix2(iplist, pprefixsum, z, w);
-                t_final=omp_get_wtime();
-                t_procedural=(t_final-t_init);
-                tp_est2[1] = tp_est2[1]+t_procedural; /* acumulacion de tiempos seriales con metodo 2*/
-                datos_arreglo(pprefixsum);
                 resultados_obtenidos(t_paralelo, t_procedural, nthreads);
                 break;
 
-        case 3: /*Calculo parallelo*/
-                if(nthreads>1)
-                {
-                  im3[nthreads]++;
-                  omp_set_num_threads(nthreads);
+        case 3: 
+                for(i=0; i<iteraciones; i++){
+                  /*Calculo parallelo*/
+                  if(nthreads>1)
+                  {
+                    im3[nthreads]++;
+                    omp_set_num_threads(nthreads);
+                    t_init=omp_get_wtime();
+                    computeparallelprefix3(iplist, pprefixsum, z, w);
+                    t_final=omp_get_wtime();
+                    t_paralelo=(t_final-t_init);
+                    tp_est3[nthreads]= tp_est3[nthreads]+t_paralelo; /* acumulacion de tiempos paralelos con metodo 3*/
+                    datos_arreglo(pprefixsum);
+                  }
+                  /*Calculo procedural*/
+                  im3[1]++;
+                  omp_set_num_threads(1);
                   t_init=omp_get_wtime();
                   computeparallelprefix3(iplist, pprefixsum, z, w);
                   t_final=omp_get_wtime();
-                  t_paralelo=(t_final-t_init);
-                  tp_est3[nthreads]= tp_est3[nthreads]+t_paralelo; /* acumulacion de tiempos paralelos con metodo 3*/
+                  t_procedural=(t_final-t_init);
+                  tp_est3[1] = tp_est3[1]+t_procedural; /* acumulacion de tiempos seriales con metodo 3*/
                   datos_arreglo(pprefixsum);
                 }
-                /*Calculo procedural*/
-                im3[1]++;
-                omp_set_num_threads(1);
-                t_init=omp_get_wtime();
-                computeparallelprefix3(iplist, pprefixsum, z, w);
-                t_final=omp_get_wtime();
-                t_procedural=(t_final-t_init);
-                tp_est3[1] = tp_est3[1]+t_procedural; /* acumulacion de tiempos seriales con metodo 3*/
-                datos_arreglo(pprefixsum);
                 resultados_obtenidos(t_paralelo, t_procedural, nthreads);
                 break;
 
         case 4: ver_estadisticas(tp_est1, tp_est2, tp_est3, im1, im2, im3, speedUp, porcentajes);
                 break;
 
-        case 5: printf( "\n   > Saliendo de aplicacion.\n\n");
+        case 5: memset(cadena, '\0', 256);
+                printf( "\n   > Introduzca el numero de iteraciones deseado: ");
+                scanf( "%s", cadena);
+                iteraciones = convertir_cadena(cadena);
+                break;
+
+        case 6: printf( "\n   > Saliendo de aplicacion.\n\n");
                 break;
 
         default: printf("\n   > Opcion no valida. Intente nuevamente segun opciones del menu.\n " );
