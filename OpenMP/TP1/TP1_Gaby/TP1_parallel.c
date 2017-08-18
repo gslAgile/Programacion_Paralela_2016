@@ -82,7 +82,7 @@ int main(int arg, char * argv[]) {
       printf( "\n   4. Ver estadisticas de algoritmos.");
       printf( "\n   5. Cambiar numero de iteraciones por algoritmo paralelo.");
       printf( "\n   6. Salir." );
-      printf( "\n\n   > Su seleccion de opcion (0-5): ");
+      printf( "\n\n   > Su seleccion de opcion (0-6): ");
 
       scanf( "%d", &opcion );
 
