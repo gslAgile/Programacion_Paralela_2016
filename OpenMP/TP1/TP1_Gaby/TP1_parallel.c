@@ -72,7 +72,8 @@ int main(int arg, char * argv[]) {
   {
       printf( "\n   >>>_      CARACTERISTICAS DEL SISTEMA      _<<<\n");
       printf("\n   > Numero de hilos disponibles en el equipo: %i",maxThrs);
-      printf("\n   > Hilos a utilizar para calculos paralelos: %i\n", nthreads);
+      printf("\n   > Hilos a utilizar para calculos paralelos: %i", nthreads);
+      printf("\n   > Tamaño de los vectores de datos: %d\n", N);
 
       printf( "\n   >>>_      MENU DE OPCIONES      _<<<\n");
       printf( "\n   0. Cambiar numero de hilos para calculos paralelos.");
@@ -342,13 +343,13 @@ void resultados_obtenidos(double par_t_paralelo, double par_t_procedural, int p_
   printf("\n   > TIEMPOS");
   printf("\n   > Tiempo paralelo: %0.4lf segundos", par_t_paralelo);
   printf("\n   > Tiempo procedural: %0.4lf segundos\n", par_t_procedural);
-  /*Calculo de speedUp (por Ley de Amdahl)*/
+  /*Calculo de speedUp (por Ley de Amdahl)
   speedUp = (par_t_procedural+par_t_paralelo)/(par_t_procedural+(par_t_paralelo)/p_nthr);
   printf("\n   > SPEEDUP");
   printf("\n   > SpeedUp segun Ley de Amdahl: %0.4lf", speedUp);
   porcentaje = (speedUp*100)-100;
   printf("\n   > Velocidad paralela: %.2lf mas rapido aproximadamente", speedUp);
-  printf("\n   > Porcentaje de mejora: %3.0lf%c aproximadamente\n", porcentaje, sim);
+  printf("\n   > Porcentaje de mejora: %3.0lf%c aproximadamente\n", porcentaje, sim);*/
 
   /* Calculo de speedUp practico*/
   speedUp = par_t_procedural/par_t_paralelo;
