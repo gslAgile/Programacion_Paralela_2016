@@ -387,7 +387,7 @@ void datos_arreglo(int *pprefixsum)
 */
 void computeparallelprefix(int *iplist, int *_pprefixsum, unsigned long size)
 {
-  int nthr, *z, *x = _pprefixsum;
+  int nthr, *z, *y = _pprefixsum;
   
   #pragma omp parallel
   {
@@ -403,7 +403,7 @@ void computeparallelprefix(int *iplist, int *_pprefixsum, unsigned long size)
     #pragma omp for schedule(static) 
     for(i=0; i<size; i++) {
       sum += iplist[i];
-      x[i] = sum;
+      y[i] = sum;
     }
     z[tid+1] = sum;
     #pragma omp barrier
@@ -415,7 +415,7 @@ void computeparallelprefix(int *iplist, int *_pprefixsum, unsigned long size)
 
     #pragma omp for schedule(static)
     for(i=0; i<size; i++) {
-      x[i] += offset;
+      y[i] += offset;
     }
   }
   free(z);
