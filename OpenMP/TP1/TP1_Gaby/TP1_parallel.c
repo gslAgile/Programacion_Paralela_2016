@@ -70,7 +70,7 @@ int main(int arg, char * argv[]) {
   /* Llamada y ejecucion de algoritmos paralelos para iniciar variables y cargar memoria cache 
    * De estamanera se evitan demoras iniciales por inicializacion de variables y carga de memorias cache
    */
-  printf( "\n   >>>_ Iniciando y cargando cache...\n");
+  printf( "\n   >>>_ Iniciando variables...\n");
   computeparallelprefix(iplist, pprefixsum, N);
   computeparallelprefix2(iplist, pprefixsum, z, w);
   computeparallelprefix3(iplist, pprefixsum, z, w);
@@ -81,6 +81,7 @@ int main(int arg, char * argv[]) {
    */
   im1[1]++;
   omp_set_num_threads(1);
+  computeparallelprefix(iplist, pprefixsum, N); /* iteracion ignorada para cargar datos en cache*/
   t_init=omp_get_wtime();
   computeparallelprefix(iplist, pprefixsum, N);
   t_final=omp_get_wtime();
@@ -91,7 +92,7 @@ int main(int arg, char * argv[]) {
    * comienza siempre con una muestra automaticamente
    */
   im2[1]++;
-  omp_set_num_threads(1);
+  computeparallelprefix2(iplist, pprefixsum, z, w); /* iteracion ignorada para cargar datos en cache*/
   t_init=omp_get_wtime();
   computeparallelprefix2(iplist, pprefixsum, z, w);
   t_final=omp_get_wtime();
@@ -102,7 +103,7 @@ int main(int arg, char * argv[]) {
    * comienza siempre con una muestra automaticamente
    */
   im3[1]++;
-  omp_set_num_threads(1);
+  computeparallelprefix3(iplist, pprefixsum, z, w); /* iteracion ignorada para cargar datos en cache*/
   t_init=omp_get_wtime();
   computeparallelprefix3(iplist, pprefixsum, z, w);
   t_final=omp_get_wtime();
@@ -146,11 +147,16 @@ int main(int arg, char * argv[]) {
 
         case 1: 
                 for(i=0; i<iteraciones; i++){
-                  /*Calculo parallelo*/
+                  /*Calculo parallelo met 1*/
                   if(nthreads>1)
                   {
+                    if(i==0) /* cargamos memoria cache para met 1 ignorando resultados*/
+                    {
+                      omp_set_num_threads(nthreads);
+                      computeparallelprefix(iplist, pprefixsum, N);
+                    }
+
                     im1[nthreads]++;
-                    omp_set_num_threads(nthreads);
                     t_init=omp_get_wtime();
                     computeparallelprefix(iplist, pprefixsum, N);
                     t_final=omp_get_wtime();
@@ -166,11 +172,16 @@ int main(int arg, char * argv[]) {
 
         case 2: 
                 for(i=0; i<iteraciones; i++){
-                  /*Calculo parallelo*/
+                  /*Calculo parallelo met 2*/
                   if(nthreads>1)
                   {
+                    if(i==0) /* cargamos memoria cache para met 2 ignorando resultados*/
+                    {
+                      omp_set_num_threads(nthreads);
+                      computeparallelprefix2(iplist, pprefixsum, z, w);
+                    }
+
                     im2[nthreads]++;
-                    omp_set_num_threads(nthreads);
                     t_init=omp_get_wtime();
                     computeparallelprefix2(iplist, pprefixsum, z, w);
                     t_final=omp_get_wtime();
@@ -186,11 +197,16 @@ int main(int arg, char * argv[]) {
 
         case 3: 
                 for(i=0; i<iteraciones; i++){
-                  /*Calculo parallelo*/
+                  /*Calculo parallelo met 3*/
                   if(nthreads>1)
                   {
+                    if(i==0) /* cargamos memoria cache para met 3 ignorando resultados*/
+                    {
+                      omp_set_num_threads(nthreads);
+                      computeparallelprefix3(iplist, pprefixsum, z, w);
+                    }
+
                     im3[nthreads]++;
-                    omp_set_num_threads(nthreads);
                     t_init=omp_get_wtime();
                     computeparallelprefix3(iplist, pprefixsum, z, w);
                     t_final=omp_get_wtime();
@@ -206,9 +222,14 @@ int main(int arg, char * argv[]) {
 
         case 4: 
                 for(i=0; i<iteraciones; i++){
+                  if(i==0) /* cargamos memoria cache para met 1 ignorando resultados*/
+                  {
+                    omp_set_num_threads(1);
+                    computeparallelprefix(iplist, pprefixsum, N);
+                  }
+
                   /* Calculo procedural met 1*/
                   im1[1]++;
-                  omp_set_num_threads(1);
                   t_init=omp_get_wtime();
                   computeparallelprefix(iplist, pprefixsum, N);
                   t_final=omp_get_wtime();
@@ -220,9 +241,14 @@ int main(int arg, char * argv[]) {
 
         case 5: 
                 for(i=0; i<iteraciones; i++){
+                  if(i==0) /* cargamos memoria cache para met 2 ignorando resultados*/
+                  {
+                    omp_set_num_threads(nthreads);
+                    computeparallelprefix2(iplist, pprefixsum, z, w);
+                  }
+
                   /* Calculo procedural met 2*/
                   im2[1]++;
-                  omp_set_num_threads(1);
                   t_init=omp_get_wtime();
                   computeparallelprefix2(iplist, pprefixsum, z, w);
                   t_final=omp_get_wtime();
@@ -234,9 +260,14 @@ int main(int arg, char * argv[]) {
 
         case 6: 
                 for(i=0; i<iteraciones; i++){
+                  if(i==0) /* cargamos memoria cache para met 3 ignorando resultados*/
+                  {
+                    omp_set_num_threads(nthreads);
+                    computeparallelprefix3(iplist, pprefixsum, z, w);
+                  }
+
                   /*Calculo procedural met 3*/
                   im3[1]++;
-                  omp_set_num_threads(1);
                   t_init=omp_get_wtime();
                   computeparallelprefix3(iplist, pprefixsum, z, w);
                   t_final=omp_get_wtime();
