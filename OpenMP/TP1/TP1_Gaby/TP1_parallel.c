@@ -4,7 +4,7 @@
 #include "omp.h"
 
 /* Definicion de Macros*/
-#define N 100000000 //33554432 // 2 ^ 25
+#define N 2000000 //33554432 // 2 ^ 25
 #define porcion N/8 /* Porcion de iteraciones, usando sch static las porciones se determinan automaticamente*/
 #define size_zw N/2 /* Porcion de iteraciones*/
 #define tam_v 100 /* tamaño fijo para vectores de estadiscas*/
